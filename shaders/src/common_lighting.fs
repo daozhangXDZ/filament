@@ -34,6 +34,13 @@ struct PixelParams {
 #if defined(SHADING_MODEL_CLOTH) && defined(MATERIAL_HAS_SUBSURFACE_COLOR)
     vec3  subsurfaceColor;
 #endif
+
+#if defined(MATERIAL_HAS_IOR)
+    float eta;
+#if defined(MATERIAL_HAS_TRANSMISSION)
+    float transmission;
+#endif
+#endif
 };
 
 float computeMicroShadowing(float NoL, float visibility) {

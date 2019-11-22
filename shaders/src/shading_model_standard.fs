@@ -100,6 +100,9 @@ vec3 surfaceShading(const PixelParams pixel, const Light light, float occlusion)
 
     vec3 Fr = specularLobe(pixel, light, h, NoV, NoL, NoH, LoH);
     vec3 Fd = diffuseLobe(pixel, NoV, NoL, LoH);
+#if defined(MATERIAL_HAS_IOR) && defined(MATERIAL_HAS_TRANSMISSION)
+    Fd *= (1.0 - pixel.transmission);
+#endif
 
     // TODO: attenuate the diffuse lobe to avoid energy gain
 

@@ -128,7 +128,7 @@ void initMaterial(out MaterialInputs material) {
     material.absorption = vec3(0.0);
 #endif
 #if defined(MATERIAL_HAS_TRANSMISSION)
-    material.transmission = 0.96;
+    material.transmission = 1.0;
 #endif
 #endif
 }

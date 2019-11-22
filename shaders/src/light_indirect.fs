@@ -131,6 +131,12 @@ vec3 getReflectedVector(const PixelParams pixel, const vec3 n) {
     return getSpecularDominantDirection(n, r, pixel.roughness);
 }
 
+#if defined(MATERIAL_HAS_IOR)
+vec3 getRefractedVector(const PixelParams pixel, const vec3 v, const vec3 n) {
+    return refract(-v, n, pixel.eta);
+}
+#endif
+
 //------------------------------------------------------------------------------
 // Prefiltered importance sampling
 //------------------------------------------------------------------------------
@@ -332,6 +338,25 @@ void evaluateSubsurfaceIBL(const PixelParams pixel, const vec3 diffuseIrradiance
 #endif
 }
 
+void applyRefraction(const PixelParams pixel,
+        const vec3 n, vec3 Fd, vec3 Fr,
+        inout vec3 color) {
+    // Note: iblLuminance is already premultiplied by the exposure
+#if defined(MATERIAL_HAS_IOR)
+    vec3 v = shading_view;
+    vec3 r = getRefractedVector(pixel, v, n);
+
+    // when reading from the cubemap, we are not pre-exposed so we apply iblLuminance
+    // which is not the case when we'll read from the screen-space buffer
+    vec3 Ft = prefilteredRadiance(r, pixel.perceptualRoughness) * frameUniforms.iblLuminance;
+    Fr *= frameUniforms.iblLuminance;
+    Fd *= frameUniforms.iblLuminance;
+    color.rgb += Fr + mix(Fd, Ft, pixel.transmission);
+#else
+    color.rgb += (Fd + Fr) * frameUniforms.iblLuminance;
+#endif
+}
+
 void evaluateIBL(const MaterialInputs material, const PixelParams pixel, inout vec3 color) {
     // Apply transform here if we wanted to rotate the IBL
     vec3 n = shading_normal;
@@ -369,6 +394,5 @@ void evaluateIBL(const MaterialInputs material, const PixelParams pixel, inout v
     multiBounceAO(diffuseAO, pixel.diffuseColor, Fd);
     multiBounceSpecularAO(specularAO, pixel.f0, Fr);
 
-    // Note: iblLuminance is already premultiplied by the exposure
-    color.rgb += (Fd + Fr) * frameUniforms.iblLuminance;
+    applyRefraction(pixel, n, Fd, Fr, color);
 }

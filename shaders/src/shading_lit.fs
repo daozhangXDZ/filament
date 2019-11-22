@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 
 float computeDiffuseAlpha(float a) {
-#if defined(BLEND_MODE_TRANSPARENT) || defined(BLEND_MODE_FADE) || defined(BLEND_MODE_MASKED)
+#if !defined(MATERIAL_HAS_IOR) && (defined(BLEND_MODE_TRANSPARENT) || defined(BLEND_MODE_FADE) || defined(BLEND_MODE_MASKED))
     return a;
 #else
     return 1.0;
@@ -81,6 +81,15 @@ void getCommonPixelParams(const MaterialInputs material, inout PixelParams pixel
     pixel.f0 = material.sheenColor;
 #if defined(MATERIAL_HAS_SUBSURFACE_COLOR)
     pixel.subsurfaceColor = material.subsurfaceColor;
+#endif
+#endif
+
+#if defined(MATERIAL_HAS_IOR)
+    pixel.eta = f0ToEta(pixel.f0.g);
+#if defined(MATERIAL_HAS_TRANSMISSION)
+    pixel.transmission = saturate(material.transmission);
+#else
+    pixel.transmission = 1.0;
 #endif
 #endif
 }
