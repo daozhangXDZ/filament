@@ -58,8 +58,7 @@ struct MaterialInputs {
     vec4  postLightingColor;
 #endif
 
-#if defined(MATERIAL_HAS_IOR)
-    float ior;
+#if defined(HAS_REFRACTION)
 #if defined(MATERIAL_HAS_ABSORPTION)
     vec3 absorption;
 #endif
@@ -122,8 +121,7 @@ void initMaterial(out MaterialInputs material) {
     material.postLightingColor = vec4(0.0);
 #endif
 
-#if defined(MATERIAL_HAS_IOR)
-    material.ior = 1.5;
+#if defined(HAS_REFRACTION)
 #if defined(MATERIAL_HAS_ABSORPTION)
     material.absorption = vec3(0.0);
 #endif

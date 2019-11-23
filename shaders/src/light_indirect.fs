@@ -131,7 +131,7 @@ vec3 getReflectedVector(const PixelParams pixel, const vec3 n) {
     return getSpecularDominantDirection(n, r, pixel.roughness);
 }
 
-#if defined(MATERIAL_HAS_IOR)
+#if defined(HAS_REFRACTION)
 vec3 getRefractedVector(const PixelParams pixel, const vec3 v, const vec3 n) {
     return refract(-v, n, pixel.eta);
 }
@@ -342,7 +342,7 @@ void applyRefraction(const PixelParams pixel,
         const vec3 n, vec3 Fd, vec3 Fr,
         inout vec3 color) {
     // Note: iblLuminance is already premultiplied by the exposure
-#if defined(MATERIAL_HAS_IOR)
+#if defined(HAS_REFRACTION)
     vec3 v = shading_view;
     vec3 r = getRefractedVector(pixel, v, n);
 

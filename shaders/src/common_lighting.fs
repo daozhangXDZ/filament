@@ -35,11 +35,9 @@ struct PixelParams {
     vec3  subsurfaceColor;
 #endif
 
-#if defined(MATERIAL_HAS_IOR)
+#if defined(HAS_REFRACTION)
     float eta;
-#if defined(MATERIAL_HAS_TRANSMISSION)
     float transmission;
-#endif
 #endif
 };
 

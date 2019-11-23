@@ -1,6 +1,7 @@
 material {
     name : Lit,
     shadingModel : lit,
+    refraction : cubemap,
     parameters : [
         {
             type : float3,
@@ -37,8 +38,6 @@ material {
 fragment {
     void material(inout MaterialInputs material) {
         prepareMaterial(material);
-        material.ior = 1.5;
-        material.transmission = 1.0;
         material.baseColor.rgb = materialParams.baseColor;
         material.roughness = materialParams.roughness;
         material.metallic = materialParams.metallic;
